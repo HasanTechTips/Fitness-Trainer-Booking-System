@@ -1,0 +1,175 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: frontend
+  template:
+    metadata:
+      labels:
+        app: frontend
+    spec:
+      containers:
+        - name: frontend
+          image: hasancodes/coe692:frontendservice-amd64
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8080
+          env:
+            - name: BOOKING_SERVICE_URL
+              value: "http://bookingservice:8080/FitnessBookingService"
+            - name: CANCEL_SERVICE_URL
+              value: "http://cancelservice:8080/FitnessCancelService"
+            - name: FRONTEND_DB_URL
+              value: "jdbc:mysql://frontenddb:3306/Account_FTMS?useSSL=false&serverTimezone=UTC"
+            - name: DB_USER
+              value: "root"
+            - name: DB_PASSWORD
+              value: "change-me"
+            - name: FTMS_JWT_SECRET
+              value: "change-me-jwt-secret"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bookingservice
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: bookingservice
+  template:
+    metadata:
+      labels:
+        app: bookingservice
+    spec:
+      containers:
+        - name: bookingservice
+          image: hasancodes/coe692:bookingservice-amd64
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8080
+          env:
+            - name: BOOKING_DB_URL
+              value: "jdbc:mysql://bookingdb:3306/Booking_FTMS?useSSL=false&serverTimezone=UTC"
+            - name: DB_USER
+              value: "root"
+            - name: DB_PASSWORD
+              value: "change-me"
+            - name: FTMS_JWT_SECRET
+              value: "change-me-jwt-secret"
+            - name: kubeMQAddress
+              value: "kubemq-cluster-grpc:50000"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cancelservice
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: cancelservice
+  template:
+    metadata:
+      labels:
+        app: cancelservice
+    spec:
+      containers:
+        - name: cancelservice
+          image: hasancodes/coe692:cancelservice-amd64
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8080
+          env:
+            - name: CANCEL_DB_URL
+              value: "jdbc:mysql://canceldb:3306/Cancel_FTMS?useSSL=false&serverTimezone=UTC"
+            - name: DB_USER
+              value: "root"
+            - name: DB_PASSWORD
+              value: "change-me"
+            - name: FTMS_JWT_SECRET
+              value: "change-me-jwt-secret"
+            - name: kubeMQAddress
+              value: "kubemq-cluster-grpc:50000"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontenddb
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: frontenddb
+  template:
+    metadata:
+      labels:
+        app: frontenddb
+    spec:
+      containers:
+        - name: frontenddb
+          image: hasancodes/coe692:frontenddb-amd64
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 3306
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              value: "change-me"
+            - name: MYSQL_DATABASE
+              value: "Account_FTMS"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bookingdb
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: bookingdb
+  template:
+    metadata:
+      labels:
+        app: bookingdb
+    spec:
+      containers:
+        - name: bookingdb
+          image: hasancodes/coe692:bookingdb-amd64
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 3306
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              value: "change-me"
+            - name: MYSQL_DATABASE
+              value: "Booking_FTMS"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: canceldb
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: canceldb
+  template:
+    metadata:
+      labels:
+        app: canceldb
+    spec:
+      containers:
+        - name: canceldb
+          image: hasancodes/coe692:canceldb-amd64
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 3306
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              value: "change-me"
+            - name: MYSQL_DATABASE
+              value: "Cancel_FTMS"

@@ -1,0 +1,71 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend
+spec:
+  type: LoadBalancer
+  selector:
+    app: frontend
+  ports:
+    - port: 80
+      targetPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: bookingservice
+spec:
+  type: ClusterIP
+  selector:
+    app: bookingservice
+  ports:
+    - port: 8080
+      targetPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: cancelservice
+spec:
+  type: ClusterIP
+  selector:
+    app: cancelservice
+  ports:
+    - port: 8080
+      targetPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontenddb
+spec:
+  type: ClusterIP
+  selector:
+    app: frontenddb
+  ports:
+    - port: 3306
+      targetPort: 3306
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: bookingdb
+spec:
+  type: ClusterIP
+  selector:
+    app: bookingdb
+  ports:
+    - port: 3306
+      targetPort: 3306
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: canceldb
+spec:
+  type: ClusterIP
+  selector:
+    app: canceldb
+  ports:
+    - port: 3306
+      targetPort: 3306
